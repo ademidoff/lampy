@@ -10,8 +10,8 @@ ENV TERM xterm
 ENV TIMEZONE Etc/UTC
 
 # Build packages first
-COPY ./packages.sh /build/packages.sh
-RUN /build/packages.sh
+COPY ./packages.sh /tmp/packages.sh
+RUN chmod +x /tmp/packages.sh && /tmp/packages.sh
 
 # Copy the bootstrap files
 COPY ./scripts /opt/mysql-bootstrap
