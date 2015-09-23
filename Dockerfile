@@ -9,6 +9,13 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV TERM xterm
 ENV TIMEZONE Etc/UTC
 
+# Build packages first
+COPY ./packages.sh /build/packages.sh
+RUN /build/packages.sh
+
+# Copy the bootstrap files
+COPY ./scripts /opt/mysql-bootstrap
+
 RUN echo $TIMEZONE > /etc/timezone && dpkg-reconfigure tzdata && \
     apt-get update && apt-get install -y \
     nano \
@@ -44,3 +51,5 @@ EXPOSE 80 3306
 # Use supervisord to start apache / mysql
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 CMD /usr/bin/supervisord -n -c /etc/supervisor/conf.d/supervisord.conf
+
+#CMD ["/opt/mysql-bootstrap/init"]
