@@ -9,11 +9,12 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV TERM xterm
 ENV TIMEZONE Etc/UTC
 
+# Build packages first
+COPY ./packages.sh /build/packages.sh
+RUN /build/packages.sh
+
 # Copy the bootstrap files
 COPY ./scripts /opt/mysql-bootstrap
-
-# Build packages first
-RUN /opt/mysql-bootstrap/packages.sh
 
 RUN echo $TIMEZONE > /etc/timezone && dpkg-reconfigure tzdata && \
     apt-get update && apt-get install -y \
