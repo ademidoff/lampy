@@ -1,6 +1,6 @@
 # A simple LAMP Stack
 
-*This is a very basic repo for php devs*
+*This is a very basic repository for php devs*
 
 
 Packages
