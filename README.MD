@@ -28,5 +28,4 @@ Point your browser to http://localhost to launch your app
 Database
 --------
 user: root
-
-pwd: [leave it blank]
+password: [leave blank]
