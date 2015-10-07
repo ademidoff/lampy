@@ -46,7 +46,7 @@ RUN chown -R www-data:www-data /var/www
 RUN a2enmod rewrite headers expires ssl > /dev/null
 
 # Expose HTTP and MySQL (you can add 443 for hhtps)
-EXPOSE 80 3306
+EXPOSE 80
 
 # Use supervisord to start apache / mysql
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
