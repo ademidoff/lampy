@@ -10,16 +10,17 @@ ENV TERM xterm
 ENV TIMEZONE Etc/UTC
 
 # Build packages first
-COPY ./packages.sh /tmp/packages.sh
-RUN chmod +x /tmp/packages.sh && /tmp/packages.sh
+# COPY ./packages.sh /tmp/packages.sh
+# RUN chmod +x /tmp/packages.sh && /tmp/packages.sh
 
 # Copy the bootstrap files
-COPY ./scripts /opt/mysql-bootstrap
+# COPY ./scripts /opt/mysql-bootstrap
 
 RUN echo $TIMEZONE > /etc/timezone && dpkg-reconfigure tzdata && \
     apt-get update && apt-get install -y \
     nano \
     wget \
+    curl \
     mysql-server \
     apache2 \
     php5 \
@@ -37,7 +38,8 @@ RUN echo $TIMEZONE > /etc/timezone && dpkg-reconfigure tzdata && \
 RUN rm -rf /var/www/html && mkdir -p /var/www/html
 
 # Clean up APT after apt installs
-RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN apt-get clean && rm -rf /tmp/* /var/tmp/*
+# RUN rm -rf /var/lib/apt/lists/* 
 
 # Give the ownership to the apache2 default user & group
 RUN chown -R www-data:www-data /var/www
@@ -51,5 +53,3 @@ EXPOSE 80
 # Use supervisord to start apache / mysql
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 CMD /usr/bin/supervisord -n -c /etc/supervisor/conf.d/supervisord.conf
-
-#CMD ["/opt/mysql-bootstrap/init"]
