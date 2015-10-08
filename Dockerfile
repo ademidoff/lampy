@@ -9,8 +9,12 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV TERM xterm
 ENV TIMEZONE Etc/UTC
 
-#echo force-unsafe-io > /etc/dpkg/dpkg.cfg.d/02apt-speedup
-#RUN apt-get --no-install-recommends -y install pwgen
+# Build packages first
+COPY ./packages.sh /tmp/packages.sh
+RUN chmod +x /tmp/packages.sh && /tmp/packages.sh
+
+# Copy the bootstrap files
+COPY ./scripts /opt/mysql-bootstrap
 
 RUN echo $TIMEZONE > /etc/timezone && dpkg-reconfigure tzdata && \
     apt-get update && apt-get install -y \
@@ -25,18 +29,15 @@ RUN echo $TIMEZONE > /etc/timezone && dpkg-reconfigure tzdata && \
     php5-curl \
     php5-apcu \
     php5-mysqlnd \
-    php-pear && \
+    php-pear \
+    supervisor && \
     pecl install channel://pecl.php.net/ssh2-0.12
-
-# Cleanup
-RUN apt-get clean && rm -rf /tmp/* /var/tmp/* 
-# RUN rm -f /etc/dpkg/dpkg.cfg.d/02apt-speedup
-# RUN rm -rf /var/lib/apt/lists/*
-# RUN find /var/lib/apt/lists -mindepth 1 -delete -print
-# RUN find /tmp /var/tmp -mindepth 2 -delete
 
 # Cleanup the default html directory
 RUN rm -rf /var/www/html && mkdir -p /var/www/html
+
+# Clean up APT after apt installs
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Give the ownership to the apache2 default user & group
 RUN chown -R www-data:www-data /var/www
@@ -48,9 +49,7 @@ RUN a2enmod rewrite headers expires ssl > /dev/null
 EXPOSE 80
 
 # Use supervisord to start apache / mysql
-# COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-# CMD /usr/bin/supervisord -n -c /etc/supervisor/conf.d/supervisord.conf
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+CMD /usr/bin/supervisord -n -c /etc/supervisor/conf.d/supervisord.conf
 
-ENTRYPOINT ["/bin/bash", "-c", "exec /usr/sbin/mysqld && source /etc/apache2/envvars && exec /usr/sbin/apache2 -DFOREGROUND"]
-
-CMD /bin/bash
+#CMD ["/opt/mysql-bootstrap/init"]
