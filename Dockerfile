@@ -24,7 +24,7 @@ RUN echo $TIMEZONE > /etc/timezone && dpkg-reconfigure tzdata && \
     mysql-server \
     apache2 \
     php5 \
-    php5-imap \
+    php5-dev \
     php5-mcrypt \
     php5-gd \
     php5-curl \
