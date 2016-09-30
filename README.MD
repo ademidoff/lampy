@@ -2,7 +2,7 @@
 
 *This is a very basic repository for php devs*
 
-
+[![](https://images.microbadger.com/badges/image/atymchuk/lampy.svg)](atymchuk)
 Packages
 --------
 
